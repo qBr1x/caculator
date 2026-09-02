@@ -1,399 +1,30 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="WeizenFuchs">
-<title>WeizenFuchs</title>
-<link rel="apple-touch-icon" href="icon.png">
-<style>
-    :root {
-        --bg: #f2f3f5;
-        --card: #ffffff;
-        --text: #1d1d1f;
-        --muted: #6e6e73;
-        --green: #28a745;
-        --green-dark: #218838;
-        --red: #dc3545;
-        --red-dark: #c82333;
-        --blue: #007aff;
-        --border: #d9d9de;
-        --brand: #7A1450;
-    }
-
-    * {
-        box-sizing: border-box;
-        -webkit-tap-highlight-color: transparent;
-    }
-
-    html, body {
-        margin: 0;
-        padding: 0;
-        min-height: 100%;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        background: var(--bg);
-        color: var(--text);
-        touch-action: manipulation;
-    }
-
-    body {
-        padding: max(18px, env(safe-area-inset-top))
-                 16px
-                 max(24px, env(safe-area-inset-bottom));
-    }
-
-    .app {
-        width: min(680px, 100%);
-        margin: 0 auto;
-    }
-
-    .header {
-        display: grid;
-        grid-template-columns: 40px 1fr 40px;
-        align-items: center;
-        margin: 8px 0 24px;
-    }
-
-    h1 {
-        text-align: center;
-        margin: 0;
-        font-size: clamp(26px, 6.5vw, 40px);
-        font-weight: 750;
-        grid-column: 2;
-    }
-
-    .logo {
-        display: block;
-        margin: 4px auto 10px;
-        height: clamp(56px, 16vw, 84px);
-        width: auto;
-    }
-
-    .icon-btn {
-        border: 0;
-        background: none;
-        font-size: 24px;
-        color: var(--muted);
-        cursor: pointer;
-        padding: 6px;
-        line-height: 1;
-    }
-
-    .icon-btn.back {
-        grid-column: 1;
-        text-align: left;
-        font-size: 28px;
-    }
-
-    .icon-btn.gear {
-        grid-column: 3;
-        text-align: right;
-    }
-
-    .items {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .item {
-        display: grid;
-        grid-template-columns: 76px 1fr 76px;
-        height: 88px;
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 16px;
-        overflow: hidden;
-        box-shadow: 0 2px 7px rgba(0,0,0,.06);
-    }
-
-    .item-button {
-        border: 0;
-        color: white;
-        font-size: 42px;
-        font-weight: 400;
-        cursor: pointer;
-        user-select: none;
-    }
-
-    .plus { background: var(--green); }
-    .plus:active { background: var(--green-dark); }
-    .minus { background: var(--red); }
-    .minus:active { background: var(--red-dark); }
-
-    .item-center {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        min-width: 0;
-    }
-
-    .item-name {
-        font-size: clamp(22px, 6vw, 30px);
-        font-weight: 700;
-    }
-
-    .item-count {
-        color: var(--muted);
-        font-size: 17px;
-        margin-top: 3px;
-    }
-
-    .total {
-        margin-top: 22px;
-        background: var(--card);
-        border: 2px solid var(--text);
-        border-radius: 18px;
-        padding: 24px 18px 26px;
-        text-align: center;
-        box-shadow: 0 3px 10px rgba(0,0,0,.08);
-    }
-
-    .total-label {
-        color: var(--muted);
-        font-size: 18px;
-        font-weight: 600;
-        margin-bottom: 5px;
-    }
-
-    .total-value {
-        font-size: clamp(48px, 13vw, 72px);
-        line-height: 1.05;
-        font-weight: 800;
-        letter-spacing: -1px;
-    }
-
-    .reset {
-        width: 100%;
-        margin-top: 14px;
-        height: 58px;
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        background: white;
-        color: var(--text);
-        font-size: 19px;
-        font-weight: 650;
-        cursor: pointer;
-    }
-
-    .reset:active { background: #e9e9ec; }
-
-    @media (max-width: 420px) {
-        .item { grid-template-columns: 68px 1fr 68px; height: 82px; }
-        .item-button { font-size: 38px; }
-    }
-
-    /* --- Einstellungen --- */
-    .hidden { display: none !important; }
-
-    .settings-list {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .setting-row {
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        padding: 12px;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .setting-row-top {
-        display: grid;
-        grid-template-columns: 1fr 44px;
-        gap: 8px;
-        align-items: center;
-    }
-
-    .setting-row-bottom {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-    }
-
-    .setting-row input[type="text"],
-    .setting-row input[type="number"] {
-        width: 100%;
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 10px 8px;
-        font-size: 17px;
-        font-family: inherit;
-        background: var(--bg);
-        color: var(--text);
-    }
-
-    .setting-row .remove-btn {
-        border: 0;
-        background: none;
-        color: var(--red);
-        font-size: 26px;
-        cursor: pointer;
-    }
-
-    .field-label {
-        font-size: 12px;
-        color: var(--muted);
-        margin-bottom: 3px;
-        display: block;
-    }
-
-    .price-wrap, .pfand-wrap {
-        position: relative;
-    }
-
-    .price-wrap span, .pfand-wrap span {
-        position: absolute;
-        right: 10px;
-        top: 34px;
-        color: var(--muted);
-        font-size: 14px;
-        pointer-events: none;
-    }
-
-    .price-wrap input, .pfand-wrap input {
-        padding-right: 26px !important;
-        text-align: right;
-    }
-
-    .add-product {
-        width: 100%;
-        margin-top: 14px;
-        height: 52px;
-        border: 1.5px dashed var(--border);
-        border-radius: 14px;
-        background: none;
-        color: var(--blue);
-        font-size: 17px;
-        font-weight: 650;
-        cursor: pointer;
-    }
-
-    .save-settings {
-        width: 100%;
-        margin-top: 22px;
-        height: 58px;
-        border: 0;
-        border-radius: 14px;
-        background: var(--blue);
-        color: white;
-        font-size: 19px;
-        font-weight: 650;
-        cursor: pointer;
-    }
-
-    .save-settings:active { opacity: 0.85; }
-
-    .settings-hint {
-        font-size: 13px;
-        color: var(--muted);
-        text-align: center;
-        margin: -4px 0 14px;
-        line-height: 1.4;
-    }
-</style>
-</head>
-
-<body>
-<div class="app">
-
-    <!-- Kassen-Ansicht -->
-    <div id="cashier-view">
-        <img class="logo" src="fox.png" alt="Fuchs Logo">
-        <div class="header">
-            <span></span>
-            <h1>WeizenFuchs</h1>
-            <button class="icon-btn gear" id="open-settings" aria-label="Einstellungen">⚙️</button>
-        </div>
-
-        <div class="items" id="items"></div>
-
-        <div class="total">
-            <div class="total-label">ZU ZAHLEN</div>
-            <div class="total-value" id="total">0,00 €</div>
-        </div>
-
-        <button class="reset" id="reset">Neue Rechnung</button>
-    </div>
-
-    <!-- Einstellungen-Ansicht -->
-    <div id="settings-view" class="hidden">
-        <div class="header">
-            <button class="icon-btn back" id="close-settings" aria-label="Zurück">‹</button>
-            <h1 style="font-size: clamp(22px, 6vw, 32px);">Einstellungen</h1>
-            <span></span>
-        </div>
-
-        <div class="settings-hint">Bei „Pfand/Stk" einstellen, wie viel Pfand automatisch mitgezählt wird, wenn dieses Getränk per +/− gebucht wird. Der Pfand-Posten selbst bleibt zusätzlich manuell änderbar.</div>
-
-        <div class="settings-list" id="settings-list"></div>
-
-        <button class="add-product" id="add-product">+ Getränk hinzufügen</button>
-        <button class="save-settings" id="save-settings">Speichern</button>
-    </div>
-
-</div>
-
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+/*
+ * ==========================
+ * PRODUKTE EINSTELLEN
+ * ==========================
+ *
+ * price         = Preis des Produkts
+ * count         = aktueller Zähler
+ * allowNegative = Darf der Zähler unter 0 gehen?
+ *
+ * Beispiele:
+ * Weizen = 5,80 € → keine negativen Werte
+ * Limo   = 4,00 € → keine negativen Werte
+ * Cola   = 4,00 € → keine negativen Werte
+ * Pfand  = 2,00 € → negative Werte erlaubt
+ */
 
-const STORAGE_KEY = "getraenkekasse_products";
-
-const defaultProducts = [
-    { name: "Weizen", price: 5.80, pfandPerUnit: 1 },
-    { name: "Limo",   price: 4.00, pfandPerUnit: 0 },
-    { name: "Cola",   price: 4.50, pfandPerUnit: 0 },
-    { name: "Pfand",  price: 5.00, pfandPerUnit: 0 }
+const products = [
+    { name: "Weizen", price: 5.80, count: 0, allowNegative: false },
+    { name: "Limo",   price: 4.00, count: 0, allowNegative: false },
+    { name: "Cola",   price: 4.00, count: 0, allowNegative: false },
+    { name: "Pfand",  price: 2.00, count: 0, allowNegative: true }
 ];
 
-function isPfandProduct(product) {
-    return product.name.trim().toLowerCase() === "pfand";
-}
-
-function loadProducts() {
-    try {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-            const parsed = JSON.parse(saved);
-            if (Array.isArray(parsed) && parsed.length > 0) {
-                return parsed.map(p => ({
-                    name: p.name,
-                    price: p.price,
-                    pfandPerUnit: typeof p.pfandPerUnit === "number" ? p.pfandPerUnit : 0,
-                    count: 0
-                }));
-            }
-        }
-    } catch (e) {}
-    return defaultProducts.map(p => ({ ...p, count: 0 }));
-}
-
-function saveProducts() {
-    const toSave = products.map(p => ({ name: p.name, price: p.price, pfandPerUnit: p.pfandPerUnit }));
-    try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
-    } catch (e) {}
-}
-
-let products = loadProducts();
-
-const cashierView = document.getElementById("cashier-view");
-const settingsView = document.getElementById("settings-view");
 const itemsContainer = document.getElementById("items");
 const totalElement = document.getElementById("total");
 const resetButton = document.getElementById("reset");
-const openSettingsBtn = document.getElementById("open-settings");
-const closeSettingsBtn = document.getElementById("close-settings");
-const settingsList = document.getElementById("settings-list");
-const addProductBtn = document.getElementById("add-product");
-const saveSettingsBtn = document.getElementById("save-settings");
 
 function formatEuro(value) {
     return value.toLocaleString("de-DE", {
@@ -403,55 +34,52 @@ function formatEuro(value) {
 }
 
 function calculateTotal() {
-    return products.reduce((sum, product) => sum + product.price * product.count, 0);
-}
-
-function findPfandProduct() {
-    return products.find(isPfandProduct) || null;
+    return products.reduce((sum, product) => {
+        return sum + product.price * product.count;
+    }, 0);
 }
 
 function render() {
     itemsContainer.innerHTML = "";
 
-    products.forEach((product) => {
+    products.forEach((product, index) => {
         const row = document.createElement("div");
         row.className = "item";
 
         row.innerHTML = `
-            <button class="item-button plus" aria-label="${product.name} hinzufügen">+</button>
+            <button 
+                class="item-button plus" 
+                aria-label="${product.name} hinzufügen">
+                +
+            </button>
+
             <div class="item-center">
                 <div class="item-name">${product.name}</div>
-                <div class="item-count">${product.count} × ${formatEuro(product.price)}</div>
+                <div class="item-count">
+                    ${product.count} × ${formatEuro(product.price)}
+                </div>
             </div>
-            <button class="item-button minus" aria-label="${product.name} abziehen">−</button>
+
+            <button 
+                class="item-button minus" 
+                aria-label="${product.name} abziehen">
+                −
+            </button>
         `;
 
+        // Produkt hinzufügen
         row.querySelector(".plus").addEventListener("click", () => {
             product.count++;
-
-            if (!isPfandProduct(product) && product.pfandPerUnit > 0) {
-                const pfandProduct = findPfandProduct();
-                if (pfandProduct) {
-                    pfandProduct.count += product.pfandPerUnit;
-                }
-            }
-
             render();
         });
 
+        // Produkt abziehen
         row.querySelector(".minus").addEventListener("click", () => {
-            const canGoNegative = isPfandProduct(product);
 
-            if (product.count > 0 || canGoNegative) {
+            // Negative Werte sind nur erlaubt,
+            // wenn allowNegative auf true gesetzt ist.
+            if (product.allowNegative || product.count > 0) {
                 product.count--;
-
-                if (!isPfandProduct(product) && product.pfandPerUnit > 0) {
-                    const pfandProduct = findPfandProduct();
-                    if (pfandProduct) {
-                        pfandProduct.count = pfandProduct.count - product.pfandPerUnit;
-                    }
-                }
-
                 render();
             }
         });
@@ -467,98 +95,5 @@ resetButton.addEventListener("click", () => {
     render();
 });
 
-/* ---------- Einstellungen ---------- */
-
-function renderSettings() {
-    settingsList.innerHTML = "";
-
-    products.forEach((product, index) => {
-        const row = document.createElement("div");
-        row.className = "setting-row";
-
-        const showPfandField = !isPfandProduct(product);
-
-        row.innerHTML = `
-            <div class="setting-row-top">
-                <input type="text" class="name-input" value="${product.name}" placeholder="Name">
-                <button class="remove-btn" aria-label="Entfernen">×</button>
-            </div>
-            <div class="setting-row-bottom">
-                <div class="price-wrap">
-                    <span class="field-label" style="position:static;">Preis</span>
-                    <input type="number" class="price-input" value="${product.price.toFixed(2)}" step="0.10" min="0" inputmode="decimal">
-                    <span>€</span>
-                </div>
-                ${showPfandField ? `
-                <div class="pfand-wrap">
-                    <span class="field-label" style="position:static;">Pfand/Stk</span>
-                    <input type="number" class="pfand-input" value="${product.pfandPerUnit}" step="1" min="0" inputmode="numeric">
-                    <span>Stk</span>
-                </div>` : `<div></div>`}
-            </div>
-        `;
-
-        row.querySelector(".remove-btn").addEventListener("click", () => {
-            products.splice(index, 1);
-            renderSettings();
-        });
-
-        settingsList.appendChild(row);
-    });
-}
-
-function openSettings() {
-    renderSettings();
-    cashierView.classList.add("hidden");
-    settingsView.classList.remove("hidden");
-}
-
-function closeSettingsWithoutSaving() {
-    settingsView.classList.add("hidden");
-    cashierView.classList.remove("hidden");
-}
-
-openSettingsBtn.addEventListener("click", openSettings);
-closeSettingsBtn.addEventListener("click", closeSettingsWithoutSaving);
-
-addProductBtn.addEventListener("click", () => {
-    products.push({ name: "Neues Getränk", price: 0, pfandPerUnit: 0, count: 0 });
-    renderSettings();
-});
-
-saveSettingsBtn.addEventListener("click", () => {
-    const rows = settingsList.querySelectorAll(".setting-row");
-    const updated = [];
-
-    rows.forEach((row, index) => {
-        const name = row.querySelector(".name-input").value.trim() || "Ohne Namen";
-        const priceRaw = row.querySelector(".price-input").value.replace(",", ".");
-        const price = parseFloat(priceRaw);
-
-        const pfandInput = row.querySelector(".pfand-input");
-        let pfandPerUnit = 0;
-        if (pfandInput) {
-            const parsedPfand = parseInt(pfandInput.value, 10);
-            pfandPerUnit = isNaN(parsedPfand) ? 0 : parsedPfand;
-        }
-
-        updated.push({
-            name: name,
-            price: isNaN(price) ? 0 : price,
-            pfandPerUnit: pfandPerUnit,
-            count: products[index] ? products[index].count : 0
-        });
-    });
-
-    products = updated;
-    saveProducts();
-    render();
-    closeSettingsWithoutSaving();
-});
-
 render();
-
-});
 </script>
-</body>
-</html>
