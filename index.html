@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
             var seen = localStorage.getItem("wf_app_version");
 
             var label = document.getElementById("version-label");
-            if (label) label.textContent = "Version " + latest;
+            if (label) label.textContent = "© 2026 qBrix - Version " + latest;
 
             if (seen !== latest) {
                 localStorage.setItem("wf_app_version", latest);
